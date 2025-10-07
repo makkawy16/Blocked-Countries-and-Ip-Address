@@ -1,4 +1,6 @@
 
+using Blocked_Countries_and_Ip_Address.Configurations;
+
 namespace Blocked_Countries_and_Ip_Address
 {
     public class Program
@@ -8,6 +10,10 @@ namespace Blocked_Countries_and_Ip_Address
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+
+            builder.Services.ConfigureISingletoneService();
+            builder.Services.ConfigureIScopedService();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
