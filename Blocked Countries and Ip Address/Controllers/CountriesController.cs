@@ -36,7 +36,7 @@ namespace Blocked_Countries_and_Ip_Address.Controllers
             if (IsDeleted) 
                 return Ok(IsDeleted);
             else
-                return BadRequest();
+                return NotFound();
         }
     }
 }
