@@ -17,16 +17,26 @@ namespace Blocked_Countries_and_Ip_Address.Controllers
             _countryService = countryService;
         }
 
-        [HttpPost]
+        [HttpPost("block")]
         public async Task<IActionResult> AddBlockedCountry([FromBody] BlockCountryRequest request) {
             BlockedCountry result = await _countryService.AddBlockCountry(request);
             return Created(string.Empty, result);
         }
 
-        [HttpGet]
+        [HttpGet("blocked")]
         public async Task<IActionResult> GetAllBlockedCountries() {
             List<BlockedCountry> blockedCountries = await _countryService.GetAllAsync();
             return Ok(blockedCountries);
+        }
+
+        [HttpDelete("block/{countryCode}")]
+        public async Task<IActionResult> DeleteBlockedCountry(string countryCode)
+        {
+            bool IsDeleted = await _countryService.DeleteAsync(countryCode);
+            if (IsDeleted) 
+                return Ok(IsDeleted);
+            else
+                return BadRequest();
         }
     }
 }

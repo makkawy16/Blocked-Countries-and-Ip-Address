@@ -8,6 +8,7 @@ namespace Blocked_Countries_and_Ip_Address.Services
     public interface ICountryService : IScopedService
     {
         Task<BlockedCountry> AddBlockCountry(BlockCountryRequest country);
+        Task<bool> DeleteAsync(string countryCode);
         Task<List<BlockedCountry>> GetAllAsync();
     }
     public class CountryService : ICountryService
@@ -21,8 +22,10 @@ namespace Blocked_Countries_and_Ip_Address.Services
 
         public async Task<BlockedCountry> AddBlockCountry (BlockCountryRequest country)
         {
-            return await _blockedCountryRepository.AddAsync(country);
+            return await _blockedCountryRepository.AddBlockedCountryAsync(country);
         }
         public async Task<List<BlockedCountry>> GetAllAsync() => await _blockedCountryRepository.GetAllAsync();
+
+        public async Task<bool> DeleteAsync(string countryCode) => await _blockedCountryRepository.DeleteBlockedAsync(countryCode);
     }
 }

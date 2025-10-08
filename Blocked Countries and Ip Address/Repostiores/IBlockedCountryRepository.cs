@@ -8,8 +8,8 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
 {
     public interface IBlockedCountryRepository : ISingletonService
     {
-        Task<BlockedCountry> AddAsync(BlockCountryRequest country);
-        Task<bool> RemoveAsync(string countryCode);
+        Task<BlockedCountry> AddBlockedCountryAsync(BlockCountryRequest country);
+        Task<bool> DeleteBlockedAsync(string countryCode);
         Task<List<BlockedCountry>> GetAllAsync();
 
     }
@@ -17,7 +17,7 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
     public class BlockedCountryRepository : IBlockedCountryRepository
     {
         private readonly ConcurrentDictionary<string, BlockedCountry> storage = new(StringComparer.OrdinalIgnoreCase);
-        public Task<BlockedCountry> AddAsync(BlockCountryRequest country)
+        public Task<BlockedCountry> AddBlockedCountryAsync(BlockCountryRequest country)
         {
             BlockedCountry blockedCountry = new BlockedCountry { CountryCode = country.CountryCode };
 
@@ -35,9 +35,10 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
             return Task.FromResult(storage.Values.ToList());
         }
 
-        public Task<bool> RemoveAsync(string countryCode)
+        public Task<bool> DeleteBlockedAsync(string countryCode)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(storage.Remove(countryCode,out _));
+
         }
     }
 }
