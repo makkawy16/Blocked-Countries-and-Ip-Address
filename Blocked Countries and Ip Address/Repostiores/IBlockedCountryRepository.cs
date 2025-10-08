@@ -11,7 +11,7 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
     {
         Task<BlockedCountry> AddBlockedCountryAsync(BlockCountryRequest country);
         Task<bool> DeleteBlockedAsync(string countryCode);
-        public Task<object> GetAllAsync(PaginationRequest pagination);
+        public Task<object> GetAllAsync(PaginationRequest pagination, string? filter);
 
     }
 
@@ -20,9 +20,9 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
         private readonly ConcurrentDictionary<string, BlockedCountry> storage = new(StringComparer.OrdinalIgnoreCase);
         public Task<BlockedCountry> AddBlockedCountryAsync(BlockCountryRequest country)
         {
-            BlockedCountry blockedCountry = new BlockedCountry { CountryCode = country.CountryCode };
+            BlockedCountry blockedCountry = new BlockedCountry { CountryCode = country.CountryCode.ToUpper(), CountryName = country.CountryName };
 
-            bool added = storage.TryAdd(country.CountryCode.ToUpper(), blockedCountry);
+            bool added = storage.TryAdd(blockedCountry.CountryCode, blockedCountry);
             if (added)
             {
                 return Task.FromResult(blockedCountry);
@@ -31,10 +31,14 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
                 throw new Exception("Failed to add this country or already exist");
         }
 
-        public Task<object> GetAllAsync(PaginationRequest pagination)
+        public Task<object> GetAllAsync(PaginationRequest pagination, string? filter)
         {
             List<BlockedCountry> blockedCountries = storage.Values.ToList();
             var total = blockedCountries.Count;
+
+            if (filter != null) 
+                blockedCountries = blockedCountries.Where(x => x.CountryName.Contains(filter) || x.CountryCode.Contains(filter.ToUpper())).ToList();
+
             var items = blockedCountries.Skip((pagination.PageIndex - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
             return Task.FromResult<object>(new {total , pagination.PageIndex , pagination.PageSize , items});

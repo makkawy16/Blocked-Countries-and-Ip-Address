@@ -24,8 +24,8 @@ namespace Blocked_Countries_and_Ip_Address.Controllers
         }
 
         [HttpGet("blocked")]
-        public async Task<IActionResult> GetAllBlockedCountries([FromQuery] PaginationRequest pagination) {
-            object blockedCountries = await _countryService.GetAllAsync(pagination);
+        public async Task<IActionResult> GetAllBlockedCountries([FromQuery] PaginationRequest pagination,[FromQuery] string? filter = null) {
+            object blockedCountries = await _countryService.GetAllAsync(pagination,filter);
             return Ok(blockedCountries);
         }
 
