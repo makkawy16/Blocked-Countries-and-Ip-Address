@@ -2,6 +2,7 @@
 using Blocked_Countries_and_Ip_Address.Repostiores.RegisterServices;
 using Blocked_Countries_and_Ip_Address.Requests;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Concurrent;
 
 namespace Blocked_Countries_and_Ip_Address.Repostiores
@@ -10,7 +11,7 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
     {
         Task<BlockedCountry> AddBlockedCountryAsync(BlockCountryRequest country);
         Task<bool> DeleteBlockedAsync(string countryCode);
-        Task<List<BlockedCountry>> GetAllAsync();
+        public Task<object> GetAllAsync(PaginationRequest pagination);
 
     }
 
@@ -30,9 +31,13 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
                 throw new Exception("Failed to add this country or already exist");
         }
 
-        public Task<List<BlockedCountry>> GetAllAsync()
+        public Task<object> GetAllAsync(PaginationRequest pagination)
         {
-            return Task.FromResult(storage.Values.ToList());
+            List<BlockedCountry> blockedCountries = storage.Values.ToList();
+            var total = blockedCountries.Count;
+            var items = blockedCountries.Skip((pagination.PageIndex - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+
+            return Task.FromResult<object>(new {total , pagination.PageIndex , pagination.PageSize , items});
         }
 
         public Task<bool> DeleteBlockedAsync(string countryCode)

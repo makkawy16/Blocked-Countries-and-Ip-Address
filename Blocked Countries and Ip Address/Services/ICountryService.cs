@@ -9,7 +9,7 @@ namespace Blocked_Countries_and_Ip_Address.Services
     {
         Task<BlockedCountry> AddBlockCountry(BlockCountryRequest country);
         Task<bool> DeleteAsync(string countryCode);
-        Task<List<BlockedCountry>> GetAllAsync();
+        Task<object> GetAllAsync(PaginationRequest pagination);
     }
     public class CountryService : ICountryService
     {
@@ -24,7 +24,7 @@ namespace Blocked_Countries_and_Ip_Address.Services
         {
             return await _blockedCountryRepository.AddBlockedCountryAsync(country);
         }
-        public async Task<List<BlockedCountry>> GetAllAsync() => await _blockedCountryRepository.GetAllAsync();
+        public async Task<object> GetAllAsync(PaginationRequest pagination) => await _blockedCountryRepository.GetAllAsync(pagination);
 
         public async Task<bool> DeleteAsync(string countryCode) => await _blockedCountryRepository.DeleteBlockedAsync(countryCode);
     }
