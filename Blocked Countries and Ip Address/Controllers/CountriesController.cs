@@ -38,5 +38,12 @@ namespace Blocked_Countries_and_Ip_Address.Controllers
             else
                 return NotFound();
         }
+
+        [HttpPost("temporal-block")]
+        public async Task<IActionResult> TempralBlock([FromBody] TemporalBlockRequest temporalBlockRequest)
+        {
+            var reuslt = _countryService.TemoralBlockCountry(temporalBlockRequest,temporalBlockRequest.DurationMinutes);
+            return Ok(reuslt);
+        }
     }
 }

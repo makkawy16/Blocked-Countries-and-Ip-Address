@@ -10,6 +10,7 @@ namespace Blocked_Countries_and_Ip_Address.Services
         Task<BlockedCountry> AddBlockCountry(BlockCountryRequest country);
         Task<bool> DeleteAsync(string countryCode);
         Task<object> GetAllAsync(PaginationRequest pagination, string? filter);
+        Task<BlockedCountry> TemoralBlockCountry(TemporalBlockRequest blockRequest, int durationInMinutes);
     }
     public class CountryService : ICountryService
     {
@@ -27,5 +28,13 @@ namespace Blocked_Countries_and_Ip_Address.Services
         public async Task<object> GetAllAsync(PaginationRequest pagination, string? filter) => await _blockedCountryRepository.GetAllAsync(pagination,filter);
 
         public async Task<bool> DeleteAsync(string countryCode) => await _blockedCountryRepository.DeleteBlockedAsync(countryCode);
+
+        public async Task<BlockedCountry> TemoralBlockCountry(TemporalBlockRequest blockRequest, int durationInMinutes)
+        {
+            if (durationInMinutes > 1 && durationInMinutes < 1440)
+                return await _blockedCountryRepository.AddTemporalBlock(blockRequest, durationInMinutes);
+            else
+                throw new InvalidOperationException("Duration must be between 1 and 1440 minutes");
+        }
     }
 }

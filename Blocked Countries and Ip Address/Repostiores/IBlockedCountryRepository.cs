@@ -1,6 +1,7 @@
 ﻿using Blocked_Countries_and_Ip_Address.Entites;
 using Blocked_Countries_and_Ip_Address.Repostiores.RegisterServices;
 using Blocked_Countries_and_Ip_Address.Requests;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Concurrent;
@@ -10,6 +11,7 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
     public interface IBlockedCountryRepository : ISingletonService
     {
         Task<BlockedCountry> AddBlockedCountryAsync(BlockCountryRequest country);
+        Task<BlockedCountry> AddTemporalBlock(TemporalBlockRequest blockedCountry, int durationInMinutes);
         Task<bool> DeleteBlockedAsync(string countryCode);
         public Task<object> GetAllAsync(PaginationRequest pagination, string? filter);
 
@@ -48,6 +50,17 @@ namespace Blocked_Countries_and_Ip_Address.Repostiores
         {
             return Task.FromResult(storage.Remove(countryCode,out _));
 
+        }
+        public async Task<BlockedCountry> AddTemporalBlock(TemporalBlockRequest blockedCountry, int durationInMinutes)
+        {
+            BlockedCountry country = new BlockedCountry()
+            {
+                CountryCode = blockedCountry.CountryCode.ToUpper(),
+                CountryName = blockedCountry.CountryName,
+                BlockedUntil = DateTime.UtcNow.AddMinutes(durationInMinutes)
+            };
+
+            return storage.AddOrUpdate(country.CountryCode, country, (key, oldvalue) => country);
         }
     }
 }

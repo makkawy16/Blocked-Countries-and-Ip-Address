@@ -5,4 +5,6 @@
         public string CountryCode { get; set; }
         public string CountryName { get; set; }
     }
+    public record TemporalBlockRequest(string CountryCode, string CountryName, int DurationInMinutes);
+
 }
